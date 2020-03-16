@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""
+TDF Listener that outputs all TDFs recieved to the screen
+"""
+__author__ = "Jordan Yates"
+
+import argparse
+import datetime
+
+import tdf3
+import ListenClient
+
+from PacpMessage import PayloadType, DecryptionError
+from NodeFilter import NodeFilter
+
+def tdf3listen(base_host, base_port, tdf_server, filter_config, filter_strict, show_raw, debug):
+    tdfparse = tdf3.Tdf()
+    tdfparse.loadTdf(tdf_server, timeout=10.0)
+    parser = tdfparse.parseTdf16
+
+    listener = ListenClient.ListenClient(base_host, base_port)
+    listener.connect()
+    node_filter = NodeFilter(filter_config)
+
+    if show_raw:
+        template = "{:17}| {:>7} | {:24} | {:>20} | {:10}| {:}"  # column widths: 24 - date, 17 - node mac, 7 - rssi, 20 - value, 10 - value raw,  35 - phenomenon
+    else:
+        template = "{:17}| {:>7} | {:24} | {:>20} | {:}"  # column widths: 24 - date, 17 - node mac, 7 - rssi, 20 - value, 35 - phenomenon
+
+    try:
+        while True:
+            try:
+                packet = listener.read(timeout=None)
+            except ConnectionResetError:
+                print("Connection to baselisten lost...")
+                return
+            except NotImplementedError:
+                continue 
+
+            for payload_type, route, payload in packet.iter_payloads():
+
+                if payload_type == PayloadType.PAYLOAD_ENC_TDF3:
+                    # Only try if there are encryption key
+                    if node_filter.encryption_keys == []:
+                        continue
+                    # Attempt decryption using filter keys
+                    decrypted = False
+                    for key in node_filter.encryption_keys:
+                        try:
+                            route, payload = packet.decrypt(route, payload, key)
+                        except DecryptionError:
+                            continue
+                        decrypted = True
+                        break
+                    if not decrypted:
+                        continue
+                elif payload_type != PayloadType.PAYLOAD_TDF3:
+                    continue
+
+                first_hop = route[-1]
+                pkt_addr = first_hop.address_fmt
+                pkt_rssi = "{:d}dBm".format( first_hop.rssi)
+                first_tdf = True
+
+                try:
+                    for point in parser(payload, datetime.datetime.utcnow(), debug=debug, combine=True):
+                        # Apply device filtering rules
+                        node_filter.consume_tdf(first_hop.address, point)
+                        filter_result = node_filter.filter(first_hop.address)
+                        if filter_strict and filter_result != NodeFilter.PASSED:
+                            continue
+                        elif filter_result == NodeFilter.FAILED:
+                            continue
+
+                        # Newline between Packets
+                        if first_tdf:
+                            print("")
+                            if show_raw:
+                                print(template.format("Node", first_hop.interface, "Date", "Value", "Raw", "Phenomenon"))
+                            else:
+                                print(template.format("Node", first_hop.interface, "Date", "Value", "Phenomenon"))
+                            first_tdf = False
+
+                        pkt_time = point['time'].strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                        for name, p in point['phenomena'].items():
+                            if show_raw:
+                                print(template.format(pkt_addr, pkt_rssi, pkt_time, p['formatted'], p['raw'], "{:s}_{:s}".format(point['sensor'], name)))
+                            else:
+                                print(template.format(pkt_addr, pkt_rssi, pkt_time, p['formatted'], "{:s}_{:s}".format(point['sensor'], name)))
+                            pkt_rssi = ""
+                            pkt_time = ""
+                            pkt_addr = ""
+                except tdf3.TdfBufferLengthError as e:
+                    print("Node: {:} = {}".format(first_hop.address_fmt, e))
+                except tdf3.TdfLookupError as e:
+                    print("Node: {:} = {}".format(first_hop.address_fmt, e))
+
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='TDF listener')
+    parser.add_argument('--host', dest='base_host', type=str, default="localhost", help='Hostname for baselisten')
+    parser.add_argument('--port', dest='base_port', type=int, default=9001, help='Port for baselisten')
+    parser.add_argument('--tdf', dest='tdf_server', type=str, default=None, help='Hostname for TDF server')
+
+    display_args = parser.add_argument_group("Display controls")
+    display_args.add_argument('--filter', dest='filter_config', type=str, default=None, help='Filter configuration file')
+    display_args.add_argument('--strict', dest='filter_strict', action="store_true", help="Don't display unsure devices")
+    display_args.add_argument('--raw', dest='show_raw', action="store_true", help='Show raw phenomenon values')
+    display_args.add_argument('--debug', dest='debug', action="store_true", help='Enable debug for TDF decoding')
+
+    args = parser.parse_args()
+
+    tdf3listen(**vars(args))
+

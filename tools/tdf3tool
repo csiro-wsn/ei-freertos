@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+import argparse
+import jinja2
+import os
+
+import tdf3
+
+ctypes_mapping = {
+    'char': (  'char', 1),
+    'double': ('double', 8),
+    'float': ( 'float', 4),
+    'int8': (  'int8_t', 1),
+    'int16': ( 'int16_t', 2),
+    'int32': ( 'int32_t', 4),
+    'int64': ( 'int64_t', 8),
+    'uint8': ( 'uint8_t', 1),
+    'uint16': ('uint16_t', 2),
+    'uint32': ('uint32_t',4),
+    'uint64': ('uint64_t', 8),
+    None: ('uint8_t', 1)
+}
+
+def tdfGen(tdf_server, output_dir):
+    tdf = tdf3.Tdf()
+    tdf.loadTdf(tdf_server)
+    integer_dict = {int(k):v for k,v in tdf.tdfDict.items()}
+    for sensor in integer_dict.values():
+        for phenom in sensor['phenomena']:
+            mapping = ctypes_mapping[phenom['ctype']]
+            assert((phenom['bytes'] % mapping[1]) == 0)
+            array_len = phenom['bytes'] // mapping[1]
+            phenom['type'] = mapping[0]
+            phenom['array'] = "[{:d}]".format(array_len) if array_len != 1 else ""
+
+    templateLoader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), "..", "templates"))
+    templateEnv = jinja2.Environment(loader=templateLoader, trim_blocks=True, lstrip_blocks=True, keep_trailing_newline=True)
+
+    tdf_auto_h_template = templateEnv.get_template('template_tdf_auto.h')
+    tdf_auto_c_template = templateEnv.get_template('template_tdf_auto.c')
+    tdf_struct_h_template = templateEnv.get_template('template_tdf_struct.h')
+
+    tdf_auto_h_template.stream(tdf_dict = integer_dict).dump(os.path.join(output_dir, "inc", "tdf_auto.h"))
+    tdf_auto_c_template.stream(tdf_dict = integer_dict).dump(os.path.join(output_dir, "src", "tdf_auto.c"))
+    tdf_struct_h_template.stream(tdf_dict = integer_dict).dump(os.path.join(output_dir, "inc", "tdf_struct.h"))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser("Generate TDF C and Python files from a TDF server")
+    parser.add_argument('--tdf', dest='tdf_server', type=str, default=None, help='Hostname for TDF server')
+    parser.add_argument('--output', dest='output_dir', type=str, default="./", help='Output directory (one level above src and inc folders)')
+    args = parser.parse_args()
+
+    tdfGen(**vars(args))

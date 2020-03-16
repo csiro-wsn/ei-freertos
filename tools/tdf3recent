@@ -1,0 +1,286 @@
+#!/usr/bin/env python3
+"""
+TDF Listener that displays the most recent value heard from each node
+"""
+
+__author__ = "Jordan Yates"
+
+import argparse
+import collections
+import datetime
+import os
+
+import tdf3
+import ListenClient
+
+from PacpMessage import PayloadType, DecryptionError
+from NodeFilter import NodeFilter
+
+
+class NodeState:
+    def __init__(self, id, existing_sensors):
+        self.id = id
+        self.readings = {}
+        self.dirty = True
+        self.heard = ""
+
+        for sensor in existing_sensors:
+            self.readings[sensor] = {}
+            for phenom in existing_sensors[sensor].phenom_lens:
+                self.readings[sensor][phenom] = ""
+    
+    def add_phenom(self, sensor, phenom):
+        if sensor not in self.readings:
+            self.readings[sensor] = {}
+        self.readings[sensor][phenom] = ""
+
+    def new_reading(self, sensor, phenom, time, value, interface, rssi):
+        self.heard = "{:s} {:>7s} {:4}dBm".format(time, interface, rssi)
+        self.dirty = True
+        self.readings[sensor][phenom] = value
+
+    def formatted_phenom_readings(self, format_str, sensor):
+        return format_str.format(**self.readings[sensor])
+
+    def formatted_sensor_readings(self, format_strings):
+        return {s:self.formatted_phenom_readings(format_str, s) for s,format_str in format_strings.items()}
+
+class SensorFormatting:
+    def __init__(self, sensor):
+        self.sensor = sensor
+        self.phenom_lens = collections.OrderedDict()
+        self.total_sensor_len = 0
+        self.sensor_fmt = ""
+        self.phenom_fmt = ""
+    
+    def add_phenom(self, phenom):
+        self.phenom_lens[phenom] = len(phenom)
+
+    def requires_screen_refresh(self, phenom, value):
+        if len(value) > self.phenom_lens[phenom]:
+            self.phenom_lens[phenom] = len(value)
+            return True
+        return False
+
+    def generate_formats(self):
+        required_name_len = len(self.sensor)
+        num_phenoms = len(self.phenom_lens)
+        required_phenom_len = sum(self.phenom_lens.values()) + (num_phenoms - 1)
+        self.total_sensor_len  = max(required_name_len, required_phenom_len)
+        phenom_padding_len = self.total_sensor_len - required_phenom_len
+        # Evenly split padding bytes between phenoms
+        per_phenom_padding = [int(phenom_padding_len / num_phenoms)]  *num_phenoms
+        # Add any remaining padding to the first phenom
+        per_phenom_padding[0] += phenom_padding_len - sum(per_phenom_padding)
+
+        self.sensor_fmt = "{{{:s}:^{:d}s}}".format(self.sensor, self.total_sensor_len)
+        self.phenom_hdr = "|".join(["{{:^{:d}}}".format(v + per_phenom_padding[i]).format(p) for i,(p,v) in enumerate(self.phenom_lens.items())])
+        self.phenom_fmt = "|".join(["{{{:s}:>{:d}s}}".format(p, v + per_phenom_padding[i]) for i,(p,v) in enumerate(self.phenom_lens.items())])
+
+
+class TdfTable:
+    HDR_LINES = 5
+
+    def __init__(self):
+        self.nodes = {}
+        self.sensors = {}
+        # Generated states for single row updates
+        self.terminal_size = (0,0)
+        self.sorted_nodes = []
+        self.phenom_formats = {}
+        self.table_format = ""
+        self.full_update = True
+
+    def update_tdf(self, first_hop, sensor):
+        s = sensor['sensor']
+        t = str(sensor['time'])[:-3]
+
+        node = first_hop.address
+        interface = first_hop.interface
+        rssi = first_hop.rssi
+
+        # Initialise node if this is the first time we've seen it
+        if node not in self.nodes:
+            self.nodes[node] =  NodeState(node, self.sensors)
+            self.full_update = True
+        # Initialise sensor
+        if s not in self.sensors:
+            self.sensors[s] = SensorFormatting(s)
+
+        for p in sensor['phenomena']:
+
+            if p not in self.sensors[s].phenom_lens:
+                self.full_update = True
+                self.sensors[s].add_phenom(p)
+                # If the phenom was not in global list, we need to add it to all nodes
+                for n in self.nodes.values():
+                    n.add_phenom(s, p)
+
+            v = sensor['phenomena'][p]['formatted']
+            # Update our latest values
+            self.nodes[node].new_reading(s,p,t,v,interface,rssi)
+            # Check whether this sample requires a complete screen refresh (due to changing widths)
+            self.full_update = self.sensors[s].requires_screen_refresh(p, v) or self.full_update
+
+    def remove_node(self, address):
+        if address in self.nodes:
+            del self.nodes[address]
+            self.full_update = True
+            self.update_screen()
+
+    def generate_formatting(self):
+        # Update our per sensor format strings
+        for sensor in self.sensors.values():
+            sensor.generate_formats()
+        # Regenerate our global format strings
+        sorted_sensors = sorted(self.sensors.keys())
+        self.sorted_nodes = sorted(self.nodes.keys())
+        self.phenom_formats = {s: v.phenom_fmt for s,v in self.sensors.items()}
+        self.table_format = "| {node:^17s} | {last_heard:^39s} |" + "|".join([self.sensors[s].sensor_fmt for s in sorted_sensors]) + "|"
+        self.seperator = "+{:s}+{:s}+{:s}+".format(19*'-', 41*'-', '+'.join(['-'*self.sensors[s].total_sensor_len for s in sorted_sensors]))
+
+
+    def output_headers(self):
+        sensor_header = self.table_format.format(last_heard="", node="", **{s:s for s in self.sensors})
+        phenom_header_strings = {s:v.phenom_hdr for s,v in self.sensors.items()}
+        phenom_header = self.table_format.format(last_heard="Last Heard", node="Node", **phenom_header_strings)
+
+        move_cursor(0,0)
+        print(self.seperator)
+        print(sensor_header)
+        print(phenom_header)
+        print(self.seperator)
+
+    def output_node(self, sorted_index):
+        node = self.sorted_nodes[sorted_index]
+        node_fmt = "{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}".format(*bytearray(node.to_bytes(6, byteorder='big')))
+        readings = self.nodes[node].formatted_sensor_readings(self.phenom_formats)
+        move_cursor(self.HDR_LINES + sorted_index, 0)
+        print(self.table_format.format(node=node_fmt, last_heard=self.nodes[node].heard, **readings))
+
+
+    def output_complete(self):
+        # Regenerate our format strings
+        self.generate_formatting()
+        # Output out titles again
+        self.output_headers()
+        # Write out all nodes
+        for index, _ in enumerate(self.sorted_nodes):
+            self.output_node(index)
+        # Write our termination line
+        if len(self.nodes) > 0:
+            print(self.seperator)
+
+    def update_screen(self):
+        # A terminal window resize requires a full update and screen clear
+        if self.terminal_size != os.get_terminal_size():
+            self.terminal_size = os.get_terminal_size()
+            os.system('clear')
+            self.full_update = True
+        if self.full_update:
+            self.full_update = False
+            self.output_complete()
+        else:
+            # Write all nodes which have changed
+            for index, n in enumerate(self.sorted_nodes):
+                if self.nodes[n].dirty:
+                    self.output_node(index)
+                    self.nodes[n].dirty = False
+            # Move cursor outside printable area so keystrokes don't destroy our table
+            move_cursor(self.HDR_LINES + len(self.nodes) + 1, 0)
+
+def move_cursor (y, x):
+    print("\033[%d;%dH" % (y, x))
+
+def value_list_parser(range_list):
+    ranges = range_list.split(",")
+    complete_list = []
+    for r in ranges:
+        if ':' in r:
+            [r_first, r_last] = r.split(':')
+            if int(r_first)<int(r_last):
+                r_first, r_last=r_last,r_first
+            complete_list += list(range(int(r_first), int(r_last)+1))
+        else:
+            if r != '':
+                complete_list.append(int(r))
+
+
+def tdf3recent(base_host, base_port, tdf_server, filter_config, filter_strict):
+    tdfparse = tdf3.Tdf()
+    tdfparse.loadTdf(tdf_server, timeout=10.0)
+    parser = tdfparse.parseTdf16
+
+    listener = ListenClient.ListenClient(base_host, base_port)
+    listener.connect()
+    node_filter = NodeFilter(filter_config)
+
+    table = TdfTable()
+    table.update_screen()
+
+    try:
+        while True:
+            # Read packet from baselisten
+            try:
+                packet = listener.read(timeout=None)
+            except ConnectionResetError:
+                print("Connection to baselisten lost...")
+                return
+            except NotImplementedError:
+                continue
+
+            for payload_type, route, payload in packet.iter_payloads():
+                first_hop = route[-1]
+
+                if payload_type == PayloadType.PAYLOAD_ENC_TDF3:
+                    # Only try if there are encryption key
+                    if node_filter.encryption_keys == []:
+                        continue
+                    # Attempt decryption using filter keys
+                    for key in node_filter.encryption_keys:
+                        try:
+                            route, payload = packet.decrypt(route, payload, key)
+                        except DecryptionError:
+                            continue
+                        break
+                elif payload_type != PayloadType.PAYLOAD_TDF3:
+                    continue
+
+                # Add TDF info to table
+                try:
+                    for sensor in parser(payload, datetime.datetime.utcnow(), debug=False, combine=True):
+                        # Apply device filtering rules
+                        node_filter.consume_tdf(first_hop.address, sensor)
+                        filter_result = node_filter.filter(first_hop.address)
+                        if filter_strict and filter_result != NodeFilter.PASSED:
+                            continue
+                        elif filter_result == NodeFilter.FAILED:
+                            table.remove_node(first_hop.address)
+                            continue
+                        # Update the 
+                        table.update_tdf(first_hop, sensor)
+                    # Update the screen
+                    table.update_screen()
+                except tdf3.TdfLookupError:
+                    continue
+
+    except KeyboardInterrupt:
+        print("")
+        pass
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='TDF listener')
+    parser.add_argument('--host', dest='base_host', type=str, default="localhost", help='Hostname for baselisten')
+    parser.add_argument('--port', '-p', dest='base_port', type=int, default=9001, help='Port for baselisten')
+    parser.add_argument('--tdf', dest='tdf_server', type=str, default=None, help='Hostname for TDF server')
+
+    display_args = parser.add_argument_group("Display controls")
+    display_args.add_argument('--filter', dest='filter_config', type=str, default=None, help='Filter configuration file')
+    display_args.add_argument('--strict', dest='filter_strict', action="store_true", help="Don't display unsure devices")
+
+    args = parser.parse_args()
+
+    tdf3recent(**vars(args))
+
+    

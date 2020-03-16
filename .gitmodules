@@ -1,0 +1,6 @@
+[submodule "core_external/mbedtls"]
+	path = core_external/mbedtls
+	url = https://github.com/ARMmbed/mbedtls.git
+[submodule "core_external/CMSIS_5"]
+	path = core_external/CMSIS_5
+	url = https://github.com/ARM-software/CMSIS_5.git
