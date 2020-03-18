@@ -3,7 +3,7 @@
 ##############################################################################
 
 PROJ_NAME     		:= low_power
-SUPPORTED_TARGETS 	:= thunderboard2 nrf52840dk bleatag argon
+SUPPORTED_TARGETS 	:= thunderboard2 nrf52840dk bleatag argon xenon
 
 ##############################################################################
 # Application Specific Flags

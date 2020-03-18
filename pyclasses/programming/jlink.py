@@ -195,7 +195,8 @@ def target_interface(target):
         "minew": JLinkInterfaceNRF52832,
         "nrf52832dk": JLinkInterfaceNRF52832,
         "linux": JLinkInterfaceLinux,
-        "argon": JLinkInterfaceNRF52840
+        "argon": JLinkInterfaceNRF52840,
+        "xenon": JLinkInterfaceNRF52840
     }
     return target_mapping[target]
 

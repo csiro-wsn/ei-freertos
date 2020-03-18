@@ -11,7 +11,7 @@
 
 /* Board Layout */
 #include "application.h"
-#include "argon.h"
+#include "xenon.h"
 #include "board.h"
 #include "nrf52840.h"
 
@@ -307,7 +307,7 @@ void prvBoardBluetoothInit(void)
 
 	xGattLocalCharacteristic_t xPlatform = {
 		.usCharacteristicHandle = gattdb_model_number_string,
-		.pucData = (uint8_t *)"argon",
+		.pucData = (uint8_t *)"xenon",
 	};
 	xGattLocalCharacteristic_t xApplication = {
 		.usCharacteristicHandle = gattdb_firmware_revision_string,

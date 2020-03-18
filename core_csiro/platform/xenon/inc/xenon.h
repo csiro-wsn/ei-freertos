@@ -2,12 +2,12 @@
  * Copyright (c) 2020, Commonwealth Scientific and Industrial Research 
  * Organisation (CSIRO) ABN 41 687 119 230.
  *
- * Filename: argon.h
+ * Filename: xenon.h
  * Creation_Date: 20/09/2019
  * Author: Anton Schieber <anton.schieber@data61.csiro.au>
  * 			(and Jon)
  *
- * Platform defines for the Particle Argon board.
+ * Platform defines for the Particle Xenon board.
  * 
  */
 
@@ -41,18 +41,6 @@
 #define TWIM1 				1
 #define TWIM1_SDA_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 26 )}
 #define TWIM1_SCL_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 27 )}
-
-/* Wifi (through ESP32) */
-#define WIFI_ENABLE_PIN  	(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 24 )}
-#define ESP_BOOT_MODE_PIN 	(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 16 )}
-#define ESP_HOST_WK_PIN 	(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 7 )}
-
-#define UART1				1
-#define UART1_RX_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 5 )}
-#define UART1_TX_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 4 )}
-#define UART1_CTS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 7 )}
-#define UART1_RTS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 6 )}
-
 
 /* SPI */
 #define SPIM0				0							// SPIM0 Instance

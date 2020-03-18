@@ -1,25 +1,22 @@
 ##############################################################################
-# Application Settings
+# Platform CPU Selection
 ##############################################################################
 
-PROJ_NAME     		:= unifiedbase
-SUPPORTED_TARGETS 	:= thunderboard2 nrf52840dk nrf52832dk bleatag argon xenon
+PLATFORM_CPU	:= nrf52840
+include $(CORE_CSIRO_DIR)/arch/nrf52/cpu/$(PLATFORM_CPU)/m_$(PLATFORM_CPU).mk
 
 ##############################################################################
-# Application Specific Flags
+# Platform Specific Peripheral Sources
 ##############################################################################
 
-APP_CFLAGS			:= 
-
 ##############################################################################
-# Application Specific Library Source Files
+# Platform Specific Task Sources
 ##############################################################################
 
-CORE_CSIRO          := $(realpath ./../../core_csiro)
-APPLICATION_SRCS 	:=
-
 ##############################################################################
-# Main Build Rules
+# Platform Specific Libraries
 ##############################################################################
 
-include ./../../core_csiro/m_common.mk
+ARCH_LIBS			+= NRF_USBD
+
+##############################################################################

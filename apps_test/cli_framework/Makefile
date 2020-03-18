@@ -3,7 +3,7 @@
 ##############################################################################
 
 PROJ_NAME     		:= cli_framework
-SUPPORTED_TARGETS 	:= nrf52840dk bleatag argon 
+SUPPORTED_TARGETS 	:= nrf52840dk bleatag argon xenon
 
 ##############################################################################
 # Application Specific Flags
