@@ -35,6 +35,8 @@ typedef char *( *fnSerialClaimBuffer_t )( void *pvContext, uint32_t *pulBufferLe
 typedef void ( *fnSerialSendBuffer_t )( void *pvContext, const char *pcBuffer, uint32_t ulBufferLen );
 typedef void ( *fnSerialReleaseBuffer_t )( void *pvContext, char *pucBuffer );
 
+typedef void (*fnSerialByteHandler_t)(char cByte);
+
 /**@brief Serial Backend Implementation */
 typedef struct xSerialBackend_t
 {

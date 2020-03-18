@@ -33,7 +33,6 @@
 
 typedef struct _xUartModule_t   xUartModule_t;
 typedef struct _xUartPlatform_t xUartPlatform_t;
-typedef void ( *xSerialByteHandler_t )( char );
 
 #include "uart_arch.h"
 
@@ -64,7 +63,7 @@ typedef void ( *xSerialByteHandler_t )( char );
 
 /* Type Definitions -----------------------------------------*/
 
-typedef void ( *xSerialByteHandler_t )( char );
+typedef void ( *fnSerialByteHandler_t )( char );
 
 struct _xUartModule_t
 {
@@ -86,7 +85,7 @@ struct _xUartModule_t
 typedef struct xSerialReceiveArgs_t
 {
 	xUartModule_t *		 pxUart;
-	xSerialByteHandler_t fnHandler;
+	fnSerialByteHandler_t fnHandler;
 } xSerialReceiveArgs_t;
 
 /* Function Declarations ------------------------------------*/

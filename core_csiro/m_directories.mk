@@ -36,6 +36,7 @@ XTI_DIR             := $(CORE_EXTERNAL_DIR)/pacp-xti/release/c_lib
 VM_DIR              := $(CORE_EXTERNAL_DIR)/pacp-vm/release
 LOCALISATION_DIR    := $(CORE_EXTERNAL_DIR)/bleat-localisation-api/release/c_lib
 SWD_DIR				:= $(CORE_EXTERNAL_DIR)/RTT
+UTF_DIR				:= $(CORE_EXTERNAL_DIR)/utf
 MBEDTLS_DIR			:= $(CORE_EXTERNAL_DIR)/mbedtls
 
 CMSIS_DIR			:= $(CORE_EXTERNAL_DIR)/CMSIS_5/CMSIS

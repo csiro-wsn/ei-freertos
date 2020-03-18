@@ -31,7 +31,7 @@
  * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)gf
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -201,6 +201,75 @@ static inline bool _NRFX_IRQ_IS_PENDING( IRQn_Type irq_number )
 #include <soc/nrfx_coredep.h>
 
 #define NRFX_DELAY_US( us_time ) nrfx_coredep_delay_us( us_time )
+
+//------------------------------------------------------------------------------
+
+#include <soc/nrfx_atomic.h>
+
+/**
+ * @brief Atomic 32 bit unsigned type.
+ */
+#define nrfx_atomic_t               nrfx_atomic_u32_t
+
+/**
+ * @brief Stores value to an atomic object and returns previously stored value.
+ *
+ * @param[in] p_data  Atomic memory pointer.
+ * @param[in] value   Value to store.
+ *
+ * @return Old value stored into atomic object.
+ */
+#define NRFX_ATOMIC_FETCH_STORE(p_data, value) nrfx_atomic_u32_fetch_store(p_data, value)
+
+/**
+ * @brief Performs logical OR operation on an atomic object and returns previously stored value.
+ *
+ * @param[in] p_data  Atomic memory pointer.
+ * @param[in] value   Value of second operand of OR operation.
+ *
+ * @return Old value stored into atomic object.
+ */
+#define NRFX_ATOMIC_FETCH_OR(p_data, value)   nrfx_atomic_u32_fetch_or(p_data, value)
+
+/**
+ * @brief Performs logical AND operation on an atomic object and returns previously stored value.
+ *
+ * @param[in] p_data  Atomic memory pointer.
+ * @param[in] value   Value of second operand of AND operation.
+ *
+ * @return Old value stored into atomic object.
+ */
+#define NRFX_ATOMIC_FETCH_AND(p_data, value)   nrfx_atomic_u32_fetch_and(p_data, value)
+
+/**
+ * @brief Performs logical XOR operation on an atomic object and returns previously stored value.
+ *
+ * @param[in] p_data  Atomic memory pointer.
+ * @param[in] value   Value of second operand of XOR operation.
+ *
+ * @return Old value stored into atomic object.
+ */
+#define NRFX_ATOMIC_FETCH_XOR(p_data, value)   nrfx_atomic_u32_fetch_xor(p_data, value)
+
+/**
+ * @brief Performs logical ADD operation on an atomic object and returns previously stored value.
+ *
+ * @param[in] p_data  Atomic memory pointer.
+ * @param[in] value   Value of second operand of ADD operation.
+ *
+ * @return Old value stored into atomic object.
+ */
+#define NRFX_ATOMIC_FETCH_ADD(p_data, value)   nrfx_atomic_u32_fetch_add(p_data, value)
+
+/**
+ * @brief Performs logical SUB operation on an atomic object and returns previously stored value.
+ *
+ * @param[in] p_data  Atomic memory pointer.
+ * @param[in] value   Value of second operand of SUB operation.
+ *
+ * @return Old value stored into atomic object.
+ */
+#define NRFX_ATOMIC_FETCH_SUB(p_data, value)   nrfx_atomic_u32_fetch_sub(p_data, value)
 
 //------------------------------------------------------------------------------
 

@@ -42,6 +42,8 @@ class PayloadType(Enum):
     PAYLOAD_ENC_RPC = 35
     PAYLOAD_ENC_RPC_RSP = 36
 
+    PAYLOAD_CUSTOM = 255
+
     def __bytes__(self):
         return self.value.to_bytes(1, byteorder='little')
 

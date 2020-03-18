@@ -19,6 +19,7 @@ import logging
 from MessageTransport import PacpTransportSerial, PacpTransportSocket
 import PacpMessage
 
+
 class ScreenOutput():
 
     def __init__(self, settings):
@@ -80,6 +81,11 @@ class SerialConnection():
             "flow_control": True,
             "dtr_reset": True,
             "rts_high": True
+        },
+        "usb": {
+            "flow_control": True,
+            "dtr_reset": False,
+            "rts_high": True
         }
     }
 
@@ -113,7 +119,9 @@ class SerialConnection():
         return self.ser.read(num_bytes)
 
     def write(self, serial_packet):
-        self.ser.write(bytes(serial_packet))
+        # Prepend with 0x00 to account for the first byte being lost on USB
+        self.ser.write(b"\x00" + bytes(serial_packet))
+
 
 class SocketConnections():
 
@@ -196,10 +204,9 @@ class SocketConnections():
         @property
         def sockets(self):
             self._clients_lock.acquire()
-            sockets = [ self._connection_socket, *self._clients ]
+            sockets = [self._connection_socket, *self._clients]
             self._clients_lock.release()
             return sockets
-        
 
     def __init__(self, packet_port, debug_port):
         self.packet_group = self.ClientGroup(packet_port)
@@ -253,7 +260,8 @@ class SocketConnections():
     def client_summary(self):
         current_clients = self.packet_group.num_clients + self.debug_group.num_clients
         self.max_clients = max(self.max_clients, current_clients)
-        logging.info("Clients: now={:d}, max={:d}".format(current_clients , self.max_clients))
+        logging.info("Clients: now={:d}, max={:d}".format(current_clients, self.max_clients))
+
 
 class Baselisten():
     def __init__(self, serial_port, baudrate, device_type, base_socket_port, show):
@@ -296,7 +304,7 @@ class Baselisten():
                 serial_packet = PacpTransportSerial(address=packet.address, sequence=self.tx_sequence, payload_type=packet.payload_type, payload=packet.payload)
                 self.screen.print_tx(serial_packet)
                 self.serial.write(serial_packet)
-                self.tx_sequence = ( self.tx_sequence + 1 ) % 256
+                self.tx_sequence = (self.tx_sequence + 1) % 256
         logging.info('Socket handler exiting')
 
     def run_serial_receive(self):
@@ -364,7 +372,7 @@ def logging_init(output, level):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Serial listener for FreeRTOS. Receives messages from a root node via serial and distributes them to clients connected via sockets')
     parser.add_argument('--serial', '-s', dest='serial_port', type=str, default="/dev/ttyUSB0", help='Serial device to connect to')
-    parser.add_argument('--device', '-d', dest='device_type', type=str, default="pacp3", help='Device type')
+    parser.add_argument('--device', '-d', dest='device_type', type=str, default="usb", help='Device type')
     parser.add_argument('--baudrate', '--baud', '-b', dest='baudrate', type=int, default=115200, help='Baudrate of connected device')
     parser.add_argument('--port', '-p', dest='base_socket_port', type=int, default=9001, help='Port for whole packet messages')
     parser.add_argument('--show', dest='show', type=str, default="rtc", help='show (r)x messages, (t)x messages, serial (h)eader and/or (d)ebug data in (c)olor')

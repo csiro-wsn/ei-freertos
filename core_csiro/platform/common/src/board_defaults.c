@@ -25,7 +25,7 @@
 /* Private Variables ----------------------------------------*/
 /*-----------------------------------------------------------*/
 
-ATTR_WEAK xSerialByteHandler_t fnBoardSerialHandler( void )
+ATTR_WEAK fnSerialByteHandler_t fnBoardSerialHandler( void )
 {
 	return vSerialPacketBuilder;
 }

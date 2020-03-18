@@ -73,7 +73,7 @@ inline static void sli_bt_cmd_handler_delegate_volatile( uint32_t header, void (
 static SemaphoreHandle_t xBtMutexHandle = NULL;
 static StaticSemaphore_t xBtMutex;
 
-STATIC_TASK_STRUCTURES( pxBtAppHandle, configMINIMAL_STACK_SIZE, tskIDLE_PRIORITY + 5 );
+STATIC_TASK_STRUCTURES( pxBtAppHandle, 2 * configMINIMAL_STACK_SIZE, tskIDLE_PRIORITY + 5 );
 STATIC_TASK_STRUCTURES( pxBtHostHandle, configMINIMAL_STACK_SIZE, tskIDLE_PRIORITY + 4 ); /* Must be lower priority that LinkLayer Task */
 STATIC_TASK_STRUCTURES( pxBtLinkLayerHandle, configMINIMAL_STACK_SIZE, tskIDLE_PRIORITY + 6 );
 

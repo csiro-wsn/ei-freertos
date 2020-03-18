@@ -61,6 +61,14 @@
 #define SPIM0_SCK_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 15 )}	// SPI0 SCK Pin
 #define SPIM0_SS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 31 )}	// SPI0 SS Pin (Placeholder: Each device should have its own SS pin).
 
+/*
+ * Antenna Switch
+ *      (CTRL_1 = 1, CTRL_2 = 0) PCB ANTENNA
+ *      (CTRL_1 = 0, CTRL_2 = 1) EXTERNAL u.FL
+ */
+#define SKY13351_CTRL_1     (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 2 )}
+#define SKY13351_CTRL_2     (xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 25 )}
+
 /* ADC */
 #define ADC_INSTANCE 			NRF_SAADC
 

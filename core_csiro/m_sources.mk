@@ -91,10 +91,12 @@ CORE_CSIRO_INCS		+= $(wildcard $(CORE_CSIRO_DIR)/arch/common/*/inc)
 ARCH_LIBS			+= CORE_ARCH
 
 CORE_ARCH_SRCS		:= $(wildcard $(PRINTF_DIR)/src/*.c)
-CORE_ARCH_SRCS		+= $(wildcard $(SWD_DIR)/SEGGER_RTT.c)	
+CORE_ARCH_SRCS		+= $(wildcard $(SWD_DIR)/SEGGER_RTT.c)
+CORE_ARCH_SRCS		+= $(wildcard $(UTF_DIR)/src/utf.c)	
 
 CORE_ARCH_SYS_INCS	:= $(PRINTF_DIR)/inc
 CORE_ARCH_SYS_INCS	+= $(SWD_DIR)
+CORE_ARCH_SYS_INCS	+= $(UTF_DIR)/inc
 
 ##############################################################################
 # Common Platform Specific Libraries

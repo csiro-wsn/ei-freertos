@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+"""
+Send a string (wrapped with serial format) to connected serial device
+"""
+__author__ = "Jordan Yates"
+
+import argparse
+
+import ListenClient
+from MessageTransport import PacpTransportSocket
+from PacpMessage import PayloadType
+
+
+def send_string(base_host, base_port, string):
+    listener = ListenClient.ListenClient(base_host, base_port)
+    listener.connect()
+
+    pkt = PacpTransportSocket(0, 0, PayloadType.PAYLOAD_CUSTOM, string.encode('utf-8'))
+    listener.write(pkt)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='TDF listener')
+    parser.add_argument('--host', dest='base_host', type=str, default="localhost", help='Hostname for baselisten')
+    parser.add_argument('--port', dest='base_port', type=int, default=9001, help='Port for baselisten')
+
+    parser.add_argument(dest='string', type=str, help='String to send')
+
+    args = parser.parse_args()
+
+    send_string(**vars(args))

@@ -1,22 +1,25 @@
 ##############################################################################
-# Platform CPU Selection
+# Application Settings
 ##############################################################################
 
-PLATFORM_CPU	:= nrf52840
-include $(CORE_CSIRO_DIR)/arch/nrf52/cpu/$(PLATFORM_CPU)/m_$(PLATFORM_CPU).mk
+PROJ_NAME     		:= cli_framework
+SUPPORTED_TARGETS 	:= nrf52840dk bleatag argon 
 
 ##############################################################################
-# Platform Specific Peripheral Sources
+# Application Specific Flags
 ##############################################################################
 
-##############################################################################
-# Platform Specific Task Sources
-##############################################################################
+APP_CFLAGS			:= 
 
 ##############################################################################
-# Platform Specific Libraries
+# Application Specific Library Source Files
 ##############################################################################
 
-ARCH_LIBS			+= NRF_USBD
+CORE_CSIRO          := $(realpath ./../../core_csiro)
+APPLICATION_SRCS 	:=
 
 ##############################################################################
+# Main Build Rules
+##############################################################################
+
+include ./../../core_csiro/m_common.mk

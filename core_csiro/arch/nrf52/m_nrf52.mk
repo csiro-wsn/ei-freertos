@@ -77,12 +77,17 @@ NRF_SDK_SRCS		:= $(SOFTWARE_CRC_DIR)/src/crc.c
 NRF_SDK_SRCS		+= $(NRF_MODULES_DIR)/mdk/system_nrf52.c
 NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_clock.c
 NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_gpiote.c
+NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_power.c
 NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_ppi.c
 NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_saadc.c
+NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_systick.c
 NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_twim.c
 NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/drivers/src/nrfx_wdt.c
 NRF_SDK_SRCS    	+= $(wildcard $(NRF_MODULES_DIR)/drivers/src/prs/*.c)
 
+NRF_SDK_SRCS    	+= $(NRF_MODULES_DIR)/soc/nrfx_atomic.c
+NRF_SDK_SRCS    	+= $(NRF52_SDK_DIR)/integration/nrfx/legacy/nrf_drv_clock.c
+NRF_SDK_SRCS    	+= $(NRF52_SDK_DIR)/integration/nrfx/legacy/nrf_drv_power.c
 NRF_SDK_SRCS    	+= $(NRF_LIBRARIES_DIR)/fstorage/nrf_fstorage.c
 NRF_SDK_SRCS    	+= $(NRF_LIBRARIES_DIR)/fstorage/nrf_fstorage_sd.c
 NRF_SDK_SRCS    	+= $(NRF_LIBRARIES_DIR)/util/app_util_platform.c
@@ -151,6 +156,18 @@ CFLAGS				+= -DMBEDTLS_AES_ROM_TABLES
 MBEDTLS_SRCS 		:= $(wildcard $(MBEDTLS_DIR)/library/*.c)
 MBEDTLS_INCS 		:= $(CORE_EXTERNAL_DIR)/config/mbedtls
 MBEDTLS_SYS_INCS 	:= $(MBEDTLS_DIR)/include
+
+##############################################################################
+# USBD
+##############################################################################
+
+NRF_USBD_SRCS		:= $(NRF_MODULES_DIR)/drivers/src/nrfx_usbd.c
+NRF_USBD_SRCS		+= $(wildcard $(NRF52_SDK_DIR)/components/libraries/usbd/*.c)
+NRF_USBD_SRCS		+= $(wildcard $(NRF52_SDK_DIR)/components/libraries/usbd/class/cdc/acm/*.c)
+
+NRF_USBD_SYS_INCS  	:= $(NRF52_SDK_DIR)/components/libraries/usbd
+NRF_USBD_SYS_INCS  	+= $(NRF52_SDK_DIR)/components/libraries/usbd/class/cdc
+NRF_USBD_SYS_INCS  	+= $(NRF52_SDK_DIR)/components/libraries/usbd/class/cdc/acm
 
 ##############################################################################
 # Architecture Libraries and Linkers

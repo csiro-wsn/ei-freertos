@@ -110,7 +110,7 @@ void vApplicationWaitUntilActivated( void );
  * 
  * @retval		Alternate serial byte handler
  */
-xSerialByteHandler_t fnBoardSerialHandler( void );
+fnSerialByteHandler_t fnBoardSerialHandler( void );
 
 /**
   @}

@@ -84,7 +84,7 @@ ATTR_NORETURN void vSerialReceiveTask( void *pvParameters )
 	xSerialReceiveArgs_t *pxArgs = (xSerialReceiveArgs_t *) pvParameters;
 
 	xUartModule_t *		 pxUart				= pxArgs->pxUart;
-	xSerialByteHandler_t xSerialByteHandler = pxArgs->fnHandler;
+	fnSerialByteHandler_t xSerialByteHandler = pxArgs->fnHandler;
 
 	for ( ;; ) {
 		xReceived = xStreamBufferReceive( pxUart->xRxStream, pcBuffer, 32, portMAX_DELAY );

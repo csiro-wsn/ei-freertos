@@ -45,6 +45,8 @@ void assertion_failed( uint32_t id, uint32_t pc, uint32_t info );
 static const uint8_t pucUniqueUUID[16]  = { 0x40, 0xBF, 0x0B, 0xAB, 0xB8, 0x0B, 0x4B, 0xE6, 0x83, 0xB6, 0xCD, 0x7D, 0x39, 0x5B, 0x04, 0x90 };
 static const uint8_t pucUniqueUUID2[16] = { 0x40, 0xBF, 0x0B, 0xAB, 0xB8, 0x0B, 0x4B, 0xE6, 0x83, 0xB6, 0xCD, 0x7D, 0x39, 0x5B, 0x04, 0x23 };
 
+static bool bSoftdeviceEnabled = false;
+
 /* Softdevice UUID Table parameters */
 static uint8_t *pucVsUUIDTable		= NULL;
 static uint32_t ulVsUUIDTableOffset = 0;
@@ -78,6 +80,7 @@ eModuleError_t eBluetoothInit( void )
 	/* Enable the Softdevice */
 	ret_code = sd_softdevice_enable( &clock_lf_cfg, assertion_failed );
 	configASSERT( ret_code == NRF_SUCCESS );
+	bSoftdeviceEnabled = true;
 
 	/* Enable and configure the Softdevice interrupt line */
 	vInterruptSetPriority( SD_EVT_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY );
@@ -212,7 +215,7 @@ eModuleError_t eBluetoothStackOff( void )
 /* Softdevice is always enabled */
 bool nrf_sdh_is_enabled( void )
 {
-	return true;
+	return bSoftdeviceEnabled;
 }
 
 /*-----------------------------------------------------------*/
