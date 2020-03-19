@@ -56,6 +56,7 @@ CORE_CSIRO_SRCS 	+= $(wildcard $(CORE_CSIRO_DIR)/platform/$(TARGET)/src/*.c)
 
 # Libraries
 CORE_CSIRO_SRCS 	+= $(wildcard $(CORE_CSIRO_DIR)/interfaces/src/*.c)
+CORE_CSIRO_SRCS 	:= $(filter-out $(CSIRO_ARCH_DIR)/interface/src/usb.c, $(CORE_CSIRO_SRCS))
 CORE_CSIRO_SRCS 	+= $(wildcard $(CORE_CSIRO_DIR)/libraries/src/*.c)
 CORE_CSIRO_SRCS		+= $(wildcard $(CORE_CSIRO_DIR)/batteries/src/*.c)
 

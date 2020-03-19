@@ -164,8 +164,9 @@ MBEDTLS_SYS_INCS 	:= $(MBEDTLS_DIR)/include
 NRF_USBD_SRCS		:= $(NRF_MODULES_DIR)/drivers/src/nrfx_usbd.c
 NRF_USBD_SRCS		+= $(wildcard $(NRF52_SDK_DIR)/components/libraries/usbd/*.c)
 NRF_USBD_SRCS		+= $(wildcard $(NRF52_SDK_DIR)/components/libraries/usbd/class/cdc/acm/*.c)
+NRF_USBD_SRCS		+= $(CSIRO_ARCH_DIR)/interface/src/usb.c
 
-NRF_USBD_SYS_INCS  	:= $(NRF52_SDK_DIR)/components/libraries/usbd
+NRF_USBD_SYS_INCS  	+= $(NRF52_SDK_DIR)/components/libraries/usbd
 NRF_USBD_SYS_INCS  	+= $(NRF52_SDK_DIR)/components/libraries/usbd/class/cdc
 NRF_USBD_SYS_INCS  	+= $(NRF52_SDK_DIR)/components/libraries/usbd/class/cdc/acm
 

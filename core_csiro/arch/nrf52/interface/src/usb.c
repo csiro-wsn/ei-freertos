@@ -35,12 +35,6 @@
 
 /* Type Definitions -----------------------------------------*/
 
-typedef struct xPendingTransmit_t
-{
-    uint8_t *pucBuffer;
-    uint32_t ulBufferLen;
-} xPendingTransmit_t;
-
 /* Function Declarations ------------------------------------*/
 
 static void vUsbdUserEventHandler(app_usbd_event_type_t event);
@@ -83,8 +77,6 @@ APP_USBD_CDC_ACM_GLOBAL_DEF(xAppCdcAcm,
 
 static fnSerialByteHandler_t fnByteHandler = NULL;
 static char pcRxBuffer[READ_SIZE];
-// static char m_tx_buffer[NRF_DRV_USBD_EPSIZE];
-// static bool m_send_flag = 0;
 
 static TaskHandle_t xUsbdThread; /**< USB stack thread. */
 
@@ -99,7 +91,7 @@ void vUsbInit(void)
     vMemoryPoolInit(pxUsbPool);
 
     xTaskCreate(vUsbdHandlerThread, "USBD", USBD_STACK_SIZE, NULL, USBD_PRIORITY, &xUsbdThread);
-
+    /* Delay to allow handler thread to initialise USB driver */
     vTaskDelay(pdMS_TO_TICKS(10));
     /* Disable this IRQ so that Softdevice will init */
     NVIC_DisableIRQ(POWER_CLOCK_IRQn);
