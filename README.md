@@ -5,6 +5,11 @@
 Embedded systems framework utilising FreeRTOS for distributed, low-power sensing applications.
 Developed by the CSIRO Data61 'Embedded Intelligence' team
 
+## Detailed Setup
+
+Refer to the following for getting set up.    
+https://csiro-wsn.github.io/platform-docs/getting_started/
+
 ## Software Setup
 
 Run the repo_setup.sh script
