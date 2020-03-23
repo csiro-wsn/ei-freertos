@@ -76,8 +76,8 @@ while [ 1 ]; do
 done
 
 # Check which directory we are in. Unless it's the base repo directory, fail.
-if [ $CURRENT_DIR != "pacp-freertos" ]; then
-    echo "You should be in the base directory 'pacp-freertos' when running this command."
+if [ $CURRENT_DIR != "ei-freertos" ]; then
+    echo "You should be in the base directory 'ei-freertos' when running this command."
     echo "Switch to it, and run this again."
     exit 1
 fi
@@ -89,38 +89,26 @@ pip3 install -r requirements.txt
 git submodule update --init
 
 # Check that pacp-tools exists in the location we expect.
-PACP_TOOLS_PATH=$PWD/../pacp-tools/
+PACP_TOOLS_PATH=$PWD/tools/
 if [ ! -d $PACP_TOOLS_PATH ]; then
     echo -e "${RED}ERROR${NC}"
-    echo "The pacp-tools repo does not exist in the code folder."
+    echo "tools does not exist in the code folder."
     echo "It is required to compile and create applications from this repo."
-    echo "You can clone it down from here: ssh://git@bitbucket.csiro.au:7999/aspc/pacp-tools.git"
     exit 1
 fi
 
 # Check that a number of required folders are all on the path.
 PATH_ERROR=0
-if [[ ! :$PATH: == */"pacp-tools/tools"* ]] ; then
+
+if [[ ! :$PATH: == */"ei-freertos/tools"* ]] ; then
     echo -e "${RED}ERROR${NC}"
-    echo "pacp-tools/tools isn't on the path"
+    echo "ei-freertos/tools isn't on the path"
     PATH_ERROR=1
 fi
 
-if [[ ! :$PATH: == */"pacp-freertos/tools"* ]] ; then
+if [[ ! :$PYTHONPATH: == */"ei-freertos/pyclasses"* ]] ; then
     echo -e "${RED}ERROR${NC}"
-    echo "pacp-freertos/tools isn't on the path"
-    PATH_ERROR=1
-fi
-
-if [[ ! :$PYTHONPATH: == */"pacp-tools/pyclasses"* ]] ; then
-    echo -e "${RED}ERROR${NC}"
-    echo "pacp-tools/pyclasses isn't on the pythonpath"
-    PATH_ERROR=1
-fi
-
-if [[ ! :$PYTHONPATH: == */"pacp-freertos/pyclasses"* ]] ; then
-    echo -e "${RED}ERROR${NC}"
-    echo "pacp-freertos/pyclasses isn't on the pythonpath"
+    echo "ei-freertos/pyclasses isn't on the pythonpath"
     PATH_ERROR=1
 fi
 
@@ -132,12 +120,11 @@ if [ $PATH_ERROR == 1 ]; then
     else
         echo "CODE=/home/{your_ident_here}/code"
     fi
+
     echo "" 
-    echo "export PATH=\$CODE/pacp-freertos/tools:\$PATH"
-    echo "export PATH=\$CODE/pacp-tools/tools:\$PATH"
+    echo "export PATH=<ei-freertos path>/tools:$PATH"
+    echo "export PYTHONPATH=<ei-freertos path>/pyclasses:$PYTHONPATH"
     echo ""
-    echo "export PYTHONPATH=\$PYTHONPATH:\$CODE/pacp-freertos/pyclasses"
-    echo "export PYTHONPATH=\$PYTHONPATH:\$CODE/pacp-tools/pyclasses"
     exit 1
 fi
 

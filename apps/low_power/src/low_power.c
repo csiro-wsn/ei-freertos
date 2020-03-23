@@ -48,6 +48,9 @@ void vApplicationStartupCallback( void )
 	uint32_t		  ulRebootCount;
 	char			  pcRebootCount[6] = { 0 };
 
+	UNUSED(pcRebootCount);
+	UNUSED(ulRebootCount);
+
 	vLedsOn( LEDS_ALL );
 
 	/* Get Reboot reason */
@@ -57,6 +60,17 @@ void vApplicationStartupCallback( void )
 	}
 
 	vLedsOff( LEDS_ALL );
+}
+
+void vApplicationTickCallback( uint32_t ulUptime )
+{
+	UNUSED( ulUptime );
+
+	xDateTime_t xDatetime;
+	vLedsToggle( LEDS_BLUE );
+
+	bRtcGetDatetime( &xDatetime );
+	eRtcPrintDatetime( &xDatetime, LOG_APPLICATION, LOG_ERROR, "Time: ", "\r\n" );
 }
 
 /*-----------------------------------------------------------*/
