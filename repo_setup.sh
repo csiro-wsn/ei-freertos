@@ -32,7 +32,7 @@ fi
 if ! [ -x "$(command -v pip3)" ]; then
     echo ""
     echo "You don't have python3 pip currently installed." >&2
-        if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "pip3 can be installed with 'brew install python3'"
     else
         echo "pip3 can be installed with 'sudo apt install python3-pip'"
