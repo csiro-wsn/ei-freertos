@@ -32,7 +32,12 @@ fi
 if ! [ -x "$(command -v pip3)" ]; then
     echo ""
     echo "You don't have python3 pip currently installed." >&2
-    echo "pip3 is automaticall installed with 'brew install python3'"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "pip3 can be installed with 'brew install python3'"
+    else
+        echo "pip3 can be installed with 'sudo apt install python3-pip'"
+    fi
+    
     echo "If an alternate source is used, please add location of pip3 to \$PATH"
     echo ""
     exit 1
@@ -88,15 +93,6 @@ pip3 install -r requirements.txt
 # Initialise the submodules
 git submodule update --init
 
-# Check that pacp-tools exists in the location we expect.
-PACP_TOOLS_PATH=$PWD/tools/
-if [ ! -d $PACP_TOOLS_PATH ]; then
-    echo -e "${RED}ERROR${NC}"
-    echo "tools does not exist in the code folder."
-    echo "It is required to compile and create applications from this repo."
-    exit 1
-fi
-
 # Check that a number of required folders are all on the path.
 PATH_ERROR=0
 
@@ -116,14 +112,13 @@ fi
 if [ $PATH_ERROR == 1 ]; then
     echo -e "${YELLOW}Paths can setup correctly by adding the following lines to your .bash_profile:${NC}"
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "CODE=/Users/{your_ident_here}/code"
+        echo "CODE=/Users/{your_username_here}/code"
     else
-        echo "CODE=/home/{your_ident_here}/code"
+        echo "CODE=/home/{your_username_here}/code"
     fi
-
-    echo "" 
-    echo "export PATH=<ei-freertos path>/tools:$PATH"
-    echo "export PYTHONPATH=<ei-freertos path>/pyclasses:$PYTHONPATH"
+    echo ""
+    echo "export PATH=\$CODE/ei-freertos/tools:\$PATH"
+    echo "export PYTHONPATH=\$PYTHONPATH:\$CODE/ei-freertos/pyclasses"
     echo ""
     exit 1
 fi

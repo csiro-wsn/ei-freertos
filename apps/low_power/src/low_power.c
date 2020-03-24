@@ -62,15 +62,4 @@ void vApplicationStartupCallback( void )
 	vLedsOff( LEDS_ALL );
 }
 
-void vApplicationTickCallback( uint32_t ulUptime )
-{
-	UNUSED( ulUptime );
-
-	xDateTime_t xDatetime;
-	vLedsToggle( LEDS_BLUE );
-
-	bRtcGetDatetime( &xDatetime );
-	eRtcPrintDatetime( &xDatetime, LOG_APPLICATION, LOG_ERROR, "Time: ", "\r\n" );
-}
-
 /*-----------------------------------------------------------*/
