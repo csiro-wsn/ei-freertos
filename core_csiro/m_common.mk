@@ -39,7 +39,7 @@ endef
 TEST_RULES := test test_clean coverage help clean clean_all test_python jlinksn
 ifneq ($(filter $(MAKECMDGOALS),$(TEST_RULES)),)
 # Set a dummy target
-TARGET := thunderboard2
+TARGET := nrf52840dk
 # Otherwise, we're trying to compile an embedded application
 else
 # Check that the target we are requesting is supported by the application
