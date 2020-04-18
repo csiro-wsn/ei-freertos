@@ -10,6 +10,9 @@ Developed by the CSIRO Data61 'Embedded Intelligence' team
 Refer to the following for getting set up.    
 https://csiro-wsn.github.io/platform-docs/getting_started/
 
+A video tutorial series for the ei-freertos repo can be found here: 
+https://www.youtube.com/playlist?list=PLY5XmR6T00-DvnNMEfenThWIh7v3epEmV
+
 ## Software Setup
 
 Run the repo_setup.sh script

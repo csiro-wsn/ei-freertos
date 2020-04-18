@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2020, Commonwealth Scientific and Industrial Research 
+ * Copyright (c) 2020, Commonwealth Scientific and Industrial Research
  * Organisation (CSIRO) ABN 41 687 119 230.
+ * All rights reserved.
  *
  * Filename: tdf_auto.h
  *
@@ -15,7 +16,7 @@
 
 /* Includes -------------------------------------------------*/
 
-#include <stdint.h>
+#include "stdint.h"
 
 #include "tdf_struct.h"
 
@@ -479,11 +480,17 @@ typedef enum eTdfIds {
     TDF_ACC_XYZ_16G                         = 462,
     TDF_GENERIC_EVENT                       = 463,
     TDF_SCHEDULER_ERROR                     = 464,
+    TDF_SI1133_DATA                         = 465,
+    TDF_EGRAZOR_6CLAS_SUM                   = 466,
+    TDF_BLEACON_STATS                       = 467,
+    TDF_BATTERY_PROCESSED                   = 468,
+    TDF_TRANSPORT_MODE                      = 469,
+    TDF_FRAUD_DETECTION_STATE               = 470,
 } eTdfIds_t;
 
 /* External Variables ---------------------------------------*/
 
-extern const uint8_t pucTdfStructLengths[465];
+extern const uint8_t pucTdfStructLengths[471];
 
 // clang-format on
 #endif /* __CORE_CSIRO_LIBRARIES_TDF_AUTO */
