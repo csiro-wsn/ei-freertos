@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2020, Commonwealth Scientific and Industrial Research 
+ * Copyright (c) 2020, Commonwealth Scientific and Industrial Research
  * Organisation (CSIRO) ABN 41 687 119 230.
+ * All rights reserved.
  *
  * Filename: tdf_struct.h
  *
@@ -3100,6 +3101,52 @@ typedef struct tdf_scheduler_error {
     uint32_t activity_pc;  
 } ATTR_PACKED tdf_scheduler_error_t;
 #define TDF_SCHEDULER_ERROR_SIZE sizeof(tdf_scheduler_error_t)
+
+// Basic data TDF for the SI1133 ambient light sensor.
+typedef struct tdf_si1133_data {
+    int32_t ultravioletCh0;  
+    int32_t ambientCh1;  
+    int32_t ambientCh2;  
+    int32_t ambientCh3;  
+} ATTR_PACKED tdf_si1133_data_t;
+#define TDF_SI1133_DATA_SIZE sizeof(tdf_si1133_data_t)
+
+typedef struct tdf_egrazor_6clas_sum {
+    uint8_t grazing;  
+    uint8_t walking;  
+    uint8_t ruminating;  
+    uint8_t resting;  
+    uint8_t drinking;  
+    uint8_t other;  
+} ATTR_PACKED tdf_egrazor_6clas_sum_t;
+#define TDF_EGRAZOR_6CLAS_SUM_SIZE sizeof(tdf_egrazor_6clas_sum_t)
+
+typedef struct tdf_bleacon_stats {
+    uint16_t uplinkCount;  
+    uint16_t downlinkCount;  
+    uint16_t gattRelayReqCount;  
+    uint32_t downlinkAge;  
+} ATTR_PACKED tdf_bleacon_stats_t;
+#define TDF_BLEACON_STATS_SIZE sizeof(tdf_bleacon_stats_t)
+
+typedef struct tdf_battery_processed {
+    uint8_t instantaneous; // Instantaneous battery percentage 
+    uint8_t processed; // Processed battery percentage 
+} ATTR_PACKED tdf_battery_processed_t;
+#define TDF_BATTERY_PROCESSED_SIZE sizeof(tdf_battery_processed_t)
+
+// Transport modes
+typedef struct tdf_transport_mode {
+    uint8_t transport_type;  
+    uint8_t accuracy;  
+} ATTR_PACKED tdf_transport_mode_t;
+#define TDF_TRANSPORT_MODE_SIZE sizeof(tdf_transport_mode_t)
+
+typedef struct tdf_fraud_detection_state {
+    uint8_t event_detected;  
+    uint8_t accuracy;  
+} ATTR_PACKED tdf_fraud_detection_state_t;
+#define TDF_FRAUD_DETECTION_STATE_SIZE sizeof(tdf_fraud_detection_state_t)
 
 
 // clang-format on
