@@ -3,26 +3,17 @@
 ## Overview
 
 Embedded systems framework utilising FreeRTOS for distributed, low-power sensing applications.
-Developed by the CSIRO Data61 'Embedded Intelligence' team
+Developed by the CSIRO Data61 Embedded Intelligence team.
 
-## Detailed Setup
+## Repo Setup
 
-Refer to the following for getting set up.    
-https://csiro-wsn.github.io/platform-docs/getting_started/
+Run the repo_setup.sh script. Follow its instructions.
 
-## Software Setup
+If you prefer lists of instructions, here is one to follow: https://drive.google.com/open?id=11VNRVRNO-bhVI-0uPQf6rFGkHT9eISf5.
 
-Run the repo_setup.sh script
+Alternatively check out the repo setup tutorial for a walkthrough of the tutorial setup.
 
-## Hardware Setup
+## Tutorials
 
-Before using Particle devices with this codebase, they must be completely erased via jlink.
-To do so, in any application directory (apps/unifiedbase for example):
-```
-make TARGET=argon jlink
-```
-Once the J-Link prompt appears:
-```
-erase
-```
-Once erasing has finished, Ctrl+C to exit J-Link
+There are a number of tutorials covering topics ranging from repository setup to logging data over bluetooth.
+There can be found here: https://www.youtube.com/playlist?list=PLY5XmR6T00-DvnNMEfenThWIh7v3epEmV.
