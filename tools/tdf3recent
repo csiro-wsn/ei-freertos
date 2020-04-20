@@ -261,7 +261,7 @@ def tdf3recent(base_host, base_port, tdf_server, filter_config, filter_strict):
                         table.update_tdf(first_hop, sensor)
                     # Update the screen
                     table.update_screen()
-                except tdf3.TdfLookupError:
+                except (tdf3.TdfLookupError, tdf3.TdfBufferLengthError):
                     continue
 
     except KeyboardInterrupt:
@@ -282,5 +282,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     tdf3recent(**vars(args))
-
-    
