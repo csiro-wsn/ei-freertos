@@ -118,8 +118,6 @@ includes = {
         "${workspaceFolder}/core_csiro/interfaces/inc",
         "${workspaceFolder}/core_csiro/libraries/inc",
         "${workspaceFolder}/core_csiro/loggers/inc",
-        "${workspaceFolder}/core_csiro/peripherals/globalstar/inc",
-        "${workspaceFolder}/core_csiro/peripherals/lora/inc",
         "${workspaceFolder}/core_csiro/peripherals/memory/inc",
         "${workspaceFolder}/core_csiro/peripherals/sensors/inc",
         "${workspaceFolder}/core_csiro/peripherals/utility/inc",
@@ -135,10 +133,7 @@ includes = {
         "${workspaceFolder}/core_external/CMSIS_5/CMSIS/DSP/Include",
         "${workspaceFolder}/core_external/FreeRTOS/Source/include",
         "${workspaceFolder}/core_external/FreeRTOS/Source/portable/GCC/ARM_CM4F",
-        "${workspaceFolder}/core_external/tiny_printf/inc",
-        "${workspaceFolder}/core_external/pacp-xti/release/c_lib/inc",
-        "${workspaceFolder}/core_external/pacp-vm/release/inc",
-        "${workspaceFolder}/core_external/bleat-localisation-api/release/c_lib/inc"
+        "${workspaceFolder}/core_external/tiny_printf/inc"
     ],
     "formatted": [
         "${{workspaceFolder}}/core_csiro/platform/{target}/inc",
