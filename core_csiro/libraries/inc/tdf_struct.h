@@ -3148,6 +3148,45 @@ typedef struct tdf_fraud_detection_state {
 } ATTR_PACKED tdf_fraud_detection_state_t;
 #define TDF_FRAUD_DETECTION_STATE_SIZE sizeof(tdf_fraud_detection_state_t)
 
+// 6 Axis Accelerometer & Gyroscope
+typedef struct tdf_lsm6dsl {
+    int16_t acc_x;  
+    int16_t acc_y;  
+    int16_t acc_z;  
+    int16_t gyro_x;  
+    int16_t gyro_y;  
+    int16_t gyro_z;  
+} ATTR_PACKED tdf_lsm6dsl_t;
+#define TDF_LSM6DSL_SIZE sizeof(tdf_lsm6dsl_t)
+
+// Orientation referenced to a base orientation
+typedef struct tdf_3d_pose {
+    int16_t roll;  
+    int16_t pitch;  
+    int16_t yaw;  
+} ATTR_PACKED tdf_3d_pose_t;
+#define TDF_3D_POSE_SIZE sizeof(tdf_3d_pose_t)
+
+// Generic 3 Axis Magnetometer
+typedef struct tdf_mag_xyz_signed {
+    int16_t x;  
+    int16_t y;  
+    int16_t z;  
+} ATTR_PACKED tdf_mag_xyz_signed_t;
+#define TDF_MAG_XYZ_SIGNED_SIZE sizeof(tdf_mag_xyz_signed_t)
+
+// General heading angle
+typedef struct tdf_heading {
+    int16_t angle;  
+} ATTR_PACKED tdf_heading_t;
+#define TDF_HEADING_SIZE sizeof(tdf_heading_t)
+
+// Distance to a target in cm
+typedef struct tdf_range_cm {
+    uint16_t range; // Centimeters 
+} ATTR_PACKED tdf_range_cm_t;
+#define TDF_RANGE_CM_SIZE sizeof(tdf_range_cm_t)
+
 
 // clang-format on
 /* Function Declarations ------------------------------------*/

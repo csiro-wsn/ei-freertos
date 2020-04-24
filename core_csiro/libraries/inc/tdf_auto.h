@@ -486,11 +486,16 @@ typedef enum eTdfIds {
     TDF_BATTERY_PROCESSED                   = 468,
     TDF_TRANSPORT_MODE                      = 469,
     TDF_FRAUD_DETECTION_STATE               = 470,
+    TDF_LSM6DSL                             = 471,
+    TDF_3D_POSE                             = 472,
+    TDF_MAG_XYZ_SIGNED                      = 473,
+    TDF_HEADING                             = 474,
+    TDF_RANGE_CM                            = 475,
 } eTdfIds_t;
 
 /* External Variables ---------------------------------------*/
 
-extern const uint8_t pucTdfStructLengths[471];
+extern const uint8_t pucTdfStructLengths[476];
 
 // clang-format on
 #endif /* __CORE_CSIRO_LIBRARIES_TDF_AUTO */

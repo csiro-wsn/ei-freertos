@@ -220,7 +220,7 @@ debug: $(OBJ_DIR)/$(PROJ_NAME).bin
 .PHONY: clean
 ## Delete all generated files for current application
 clean:
-	rm -rf $(REPO_ROOT)/build
+	rm -rf ./build
 	rm -f $(SRC_DIR)/rpc_server_*.c 
 	rm -f $(INC_DIR)/rpc_server.h 
 	rm -f $(SRC_DIR)/rpc_client_*.c 

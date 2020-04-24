@@ -48,10 +48,10 @@
 #define ESP_HOST_WK_PIN 	(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 0, 7 )}
 
 #define UART1				1
-#define UART1_RX_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 5 )}
-#define UART1_TX_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 4 )}
-#define UART1_CTS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 7 )}
-#define UART1_RTS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 6 )}
+#define UART1_RX_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 3 )}        //D8
+#define UART1_TX_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 12 )}       //D7
+#define UART1_CTS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 11 )}
+#define UART1_RTS_PIN		(xGpio_t){.ucPin = NRF_GPIO_PIN_MAP( 1, 10 )}
 
 
 /* SPI */
