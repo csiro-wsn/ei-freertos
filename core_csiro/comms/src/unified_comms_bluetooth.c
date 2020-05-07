@@ -99,6 +99,7 @@ static bool   bLastBluetoothConnectable = false;
 static uint8_t pucInitialisationVectorTail[13] = {0};
 
 static bool (*fnDecryptionChecker)(uint8_t *pucData, uint8_t ucDataLen) = NULL;
+static vCustomPacketHandler_t fnCustomHandler = NULL;
 
 xCommsInterface_t xBluetoothComms = {
 	.eInterface		  = COMMS_INTERFACE_BLUETOOTH,
@@ -273,6 +274,10 @@ void vBluetoothReceived( const uint8_t *pucAddress, eBluetoothAddressType_t eAdd
 
 	/* Output all scan info on verbose */
 	eLog( LOG_BLUETOOTH_GAP, LOG_VERBOSE, "BT: RSSI:%d ADDR: %:6R DATA: %*A\r\n", cRssi, pucAddress, ucDataLen, pucData );
+
+	if (fnCustomHandler != NULL) {
+		fnCustomHandler(pucAddress, eAddressType, cRssi, bConnectable, pucData, ucDataLen);
+	}
 
 	/* If there is no registered packet handler, there is nothing to do */
 	if ( xBluetoothComms.fnReceiveHandler == NULL ) {
@@ -466,6 +471,13 @@ void vUnifiedCommsBluetoothSetInitialisationVector( uint8_t pucInitialisationTai
 void vUnifiedCommsBluetoothDecryptionChecker( bool (*fnChecker)(uint8_t *pucData, uint8_t ucDataLen))
 {
 	fnDecryptionChecker = fnChecker;
+}
+
+/*-----------------------------------------------------------*/
+
+void vUnifiedCommsBluetoothCustomHandler( vCustomPacketHandler_t fnPacketHandler )
+{
+	fnCustomHandler = fnPacketHandler;
 }
 
 /*-----------------------------------------------------------*/
