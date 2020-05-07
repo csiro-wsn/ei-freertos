@@ -144,6 +144,7 @@ if ! [ -x "$(command -v arm-none-eabi-gcc)" ]; then
     exit 1
 fi
 
+mkdir unit_tests
 # If the CPPUTEST folder doesn't exist, install cpputest
 if [ ! -d $CURRENT_PATH/unit_tests/cpputest ]; then
     cd unit_tests
