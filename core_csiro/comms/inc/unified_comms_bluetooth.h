@@ -77,6 +77,10 @@ typedef enum eUnifiedCommsBluetoothChannel_t {
 	COMMS_CHANNEL_BLUETOOTH_PHONE   = 1
 } eUnifiedCommsBluetoothChannel_t;
 
+typedef void ( *vCustomPacketHandler_t )( const uint8_t *pucAddress, eBluetoothAddressType_t eAddressType, 
+										int8_t cRssi, bool bConnectable, 
+										uint8_t *pucData, uint8_t ucDataLen );
+
 /* Variable Declarations ------------------------------------*/
 
 /*
@@ -121,5 +125,14 @@ void vUnifiedCommsBluetoothSetInitialisationVector( uint8_t pucInitialisationTai
  * @param[in] 	fnChecker		Validator function
  */
 void vUnifiedCommsBluetoothDecryptionChecker( bool (*fnChecker)(uint8_t *pucData, uint8_t ucDataLen));
+
+/**@brief Set handler function for unfiltered advertisement packets  
+ * 
+ * If set, the provided function will be called for ALL Bluetooth advertisement
+ * packets observed.
+ * 
+ * @param[in] 	fnPacketHandler		Custom packet handler
+ */
+void vUnifiedCommsBluetoothCustomHandler( vCustomPacketHandler_t fnPacketHandler );
 
 #endif /* __CSIRO_CORE_COMMS_UNIFIED_BLUETOOTH */

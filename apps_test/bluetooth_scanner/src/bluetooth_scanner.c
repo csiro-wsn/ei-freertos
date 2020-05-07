@@ -17,7 +17,7 @@
 #include "rtc.h"
 #include "watchdog.h"
 
-#include "unified_comms_serial.h"
+#include "unified_comms_bluetooth.h"
 
 /* Private Defines ------------------------------------------*/
 // clang-format off
@@ -27,9 +27,9 @@
 
 /* Function Declarations ------------------------------------*/
 
-void vCustomSerialHandler(xCommsInterface_t *pxComms,
-						  xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
-						  xUnifiedCommsMessage_t *pxMessage);
+void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t eAddressType, 
+							int8_t cRssi, bool bConnectable, 
+							uint8_t *pucData, uint8_t ucDataLen );
 
 /* Private Variables ----------------------------------------*/
 
@@ -56,9 +56,9 @@ void vApplicationStartupCallback(void)
 		vWatchdogPrintRebootReason(LOG_APPLICATION, LOG_INFO, pxRebootData);
 	}
 
-	/* Setup our serial receive handler */
-	xSerialComms.fnReceiveHandler = vCustomSerialHandler;
-	vUnifiedCommsListen(&xSerialComms, COMMS_LISTEN_ON_FOREVER);
+	/* Setup our Bluetooth receive handler */
+	vUnifiedCommsBluetoothCustomHandler(vCustomBluetoothHandler);
+	vUnifiedCommsListen(&xBluetoothComms, COMMS_LISTEN_ON_FOREVER);
 
 	vLedsOff(LEDS_ALL);
 }
@@ -68,31 +68,23 @@ void vApplicationStartupCallback(void)
 void vApplicationTickCallback(uint32_t ulUptime)
 {
 	UNUSED(ulUptime);
-	xDateTime_t xDatetime;
-	bRtcGetDatetime(&xDatetime);
-	eRtcPrintDatetime(&xDatetime, LOG_APPLICATION, LOG_ERROR, "Time: ", "\r\n");
 }
 
 /*-----------------------------------------------------------*/
 
-void vCustomSerialHandler(xCommsInterface_t *pxComms,
-						  xUnifiedCommsIncomingRoute_t *pxCurrentRoute,
-						  xUnifiedCommsMessage_t *pxMessage)
+void vCustomBluetoothHandler( const uint8_t *pucAddress, eBluetoothAddressType_t eAddressType, 
+							int8_t cRssi, bool bConnectable, 
+							uint8_t *pucData, uint8_t ucDataLen )
 {
-	char pcLocalString[60] = {0};
-	UNUSED(pxCurrentRoute);
-	UNUSED(pxComms);
-	/* 
-	 * Copy the string to a local buffer so it can be NULL terminated properly
-	 * The %s format specifier does not respect provided lengths
-	 */
-	pvMemcpy(pcLocalString, pxMessage->pucPayload, pxMessage->usPayloadLen);
+	UNUSED(eAddressType);
+	UNUSED(bConnectable);
 
-	eLog(LOG_APPLICATION, LOG_INFO, "\r\nReceived PKT:\r\n");
-	eLog(LOG_APPLICATION, LOG_INFO, "\t  Type: %02X\r\n", pxMessage->xPayloadType);
-	eLog(LOG_APPLICATION, LOG_INFO, "\tString: %s\r\n\r\n", pcLocalString);
+	/* Limit printed devices based on RSSI */
+	if (cRssi < -60) {
+		return;
+	}
 
-	vLedsToggle(LEDS_BLUE);
+	eLog(LOG_APPLICATION, LOG_INFO, "%:6R %3d dBm = % *A\r\n", pucAddress, cRssi, ucDataLen, pucData );
 }
 
 /*-----------------------------------------------------------*/
