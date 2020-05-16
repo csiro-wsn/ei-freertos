@@ -146,6 +146,7 @@ fi
 
 # If the CPPUTEST folder doesn't exist, install cpputest
 if [ ! -d $CURRENT_PATH/unit_tests/cpputest ]; then
+    mkdir -p unit_tests
     cd unit_tests
     git clone https://github.com/cpputest/cpputest.git
     cd cpputest
